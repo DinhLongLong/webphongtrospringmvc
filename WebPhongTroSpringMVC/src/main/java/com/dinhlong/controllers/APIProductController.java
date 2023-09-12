@@ -16,6 +16,9 @@ import com.dinhlong.service.UserService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -110,12 +113,48 @@ public class APIProductController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     
-//    @CrossOrigin
-//    @PostMapping("/api/delete-product/{productId}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void deleteProduct(@PathVariable int productId) {
-//        this.productService.deleteProduct(productId);
-//    }
+    @CrossOrigin
+    @PostMapping("/api/delete-product/{productId}")
+    public ResponseEntity<Object> deleteProduct(@PathVariable int productId) {
+        return new ResponseEntity<>(productService.deleteProduct(productId), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping(path = "/api/update-product", produces = {
+            MediaType.APPLICATION_JSON_VALUE
+    })
+    public ResponseEntity<Product> updateProduct(@RequestBody Map<String, String> params) {
+        int id = Integer.valueOf(params.get("id"));
+        String name = params.get("name");
+        String price = params.get("price");
+        String description = params.get("description");
+        String userId = params.get("userId");
+        String acreage = params.get("acreage");
+        String locationId = params.get("locationId");
+        String categoryId = params.get("categoryId");
+        String img = params.get("img");
+
+        Product prod = new Product();
+
+        prod.setId(id);
+        prod.setAcreage(Double.parseDouble(acreage));
+        prod.setImg(img);
+        prod.setDescription(description);
+        prod.setPrice(new BigDecimal(price));
+        prod.setName(name);
+
+        prod.setUser(Objects.nonNull(userId) ? this.userService.getUserById(Integer.parseInt(userId)) : null);
+        prod.setCategory(Objects.nonNull(categoryId) ? this.categoryService.getCateById(Integer.parseInt(categoryId)) : null);
+        prod.setLocation(Objects.nonNull(locationId) ? this.locationService.getLocationById(Integer.parseInt(locationId)) : null);
+
+        Boolean isSuccess = this.productService.updateProduct(prod);
+
+        if (isSuccess) {
+            return new ResponseEntity<>(prod, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
     
     
 //    @CrossOrigin

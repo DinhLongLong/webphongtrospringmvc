@@ -19,4 +19,5 @@ public interface ProductRepository {
     List<Product> getProducts();
     List<Product> getProducts(int id);
     List<Product> getCatProducts(int categoryId);
+    boolean updateProduct(Product product);
 }

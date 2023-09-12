@@ -33,6 +33,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.addProduct(product);
     }
 
+    @Override
+    public boolean updateProduct(Product product) {
+        return productRepository.updateProduct(product);
+    }
+
     public List<Product> getProducts() {
         return this.productRepository.getProducts();
     }

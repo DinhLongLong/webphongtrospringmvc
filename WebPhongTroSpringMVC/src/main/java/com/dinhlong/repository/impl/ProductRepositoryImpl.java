@@ -108,4 +108,16 @@ public class ProductRepositoryImpl implements ProductRepository {
         Session session = this.sessionFactory.getObject().getCurrentSession();
         return session.get(Product.class, id);
     }
+
+    @Override
+    public boolean updateProduct(Product product) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        try {
+            session.update(product);
+            return true;
+        } catch (HibernateException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return false;
+    }
 }
