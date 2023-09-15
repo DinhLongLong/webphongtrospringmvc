@@ -47,7 +47,6 @@ public class Product implements Serializable {
     private User user;
     
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
     
@@ -55,13 +54,16 @@ public class Product implements Serializable {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
     
-    @ManyToMany
-    @JoinTable(
-            name = "comment",
-            joinColumns = {@JoinColumn(name = "product_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")}
-    )
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private List<Comment> comments;
+    
+//    @ManyToMany
+//    @JoinTable(
+//            name = "comment",
+//            joinColumns = {@JoinColumn(name = "product_id")},
+//            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+//    )
+//    private List<Comment> comments;
     
     @Transient
     private MultipartFile file;

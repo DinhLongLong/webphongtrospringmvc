@@ -26,14 +26,14 @@ public class Comment {
     private int id;
     
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+    
+    private String content;
 
     /**
      * @return the id
@@ -75,6 +75,20 @@ public class Comment {
      */
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    /**
+     * @return the content
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * @param content the content to set
+     */
+    public void setContent(String content) {
+        this.content = content;
     }
     
 }

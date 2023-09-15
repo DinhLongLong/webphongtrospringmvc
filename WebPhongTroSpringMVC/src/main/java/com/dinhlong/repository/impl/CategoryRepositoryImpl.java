@@ -9,6 +9,7 @@ import com.dinhlong.pojos.Category;
 import com.dinhlong.repository.CategoryRepository;
 import java.util.List;
 import javax.persistence.Query;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -36,9 +37,46 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public Category getCateById(int id) {
+    public Category getCategoryById(int id) {
         Session session = this.sessionFactory.getObject().getCurrentSession();
         
         return session.get(Category.class, id);
+    }
+
+    @Override
+    public boolean deleteCategory(int id) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        Category cate = this.getCategoryById(id);
+        try {
+            session.delete(cate);
+            return true;
+        } catch (HibernateException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean addCategory(Category category) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        try {
+            session.save(category);
+            return true;
+        } catch (HibernateException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateCategory(Category category) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        try {
+            session.update(category);
+            return true;
+        } catch (HibernateException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return false;
     }
 }

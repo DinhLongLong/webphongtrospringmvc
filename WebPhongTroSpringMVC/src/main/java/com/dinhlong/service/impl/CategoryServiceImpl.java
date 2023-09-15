@@ -27,7 +27,22 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category getCateById(int id) {
-         return this.categoryRepository.getCateById(id);
+    public Category getCategoryById(int id) {
+         return this.categoryRepository.getCategoryById(id);
+    }
+
+    @Override
+    public boolean deleteCategory(int id) {
+        return this.categoryRepository.deleteCategory(id);
+    }
+
+    @Override
+    public boolean addCategory(Category category) {
+        return categoryRepository.addCategory(category);
+    }
+
+    @Override
+    public boolean updateCategory(Category category) {
+        return this.categoryRepository.updateCategory(category);
     }
 }

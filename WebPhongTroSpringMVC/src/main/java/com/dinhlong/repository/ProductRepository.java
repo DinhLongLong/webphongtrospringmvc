@@ -15,8 +15,10 @@ import java.util.List;
 public interface ProductRepository {
     boolean addProduct(Product product);
     boolean deleteProduct(int id);
+    boolean updateProduct(Product product);
     Product getProductById(int id);
     List<Product> getProducts();
     List<Product> getProducts(int id);
-    List<Product> getCatProducts(int categoryId);
+    List<Product> getProductsByUserId(int userId);
+    List<Product> getProductsByCategoryId(int categoryId);
 }

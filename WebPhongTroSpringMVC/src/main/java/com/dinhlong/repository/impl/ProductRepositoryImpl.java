@@ -74,7 +74,24 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> getCatProducts(int categoryId) {
+    public List<Product> getProductsByUserId(int userId) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Product> query = builder.createQuery(Product.class);
+        Root<Product> root = query.from(Product.class);
+        query = query.select(root);
+
+        if (userId != 0) {
+            query.where(builder.equal(root.get("user").get("id"), userId));
+        }
+
+        Query q = session.createQuery(query);
+
+        return q.getResultList();
+    }
+    
+    @Override
+    public List<Product> getProductsByCategoryId(int categoryId) {
         Session session = this.sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Product> query = builder.createQuery(Product.class);
@@ -99,13 +116,25 @@ public class ProductRepositoryImpl implements ProductRepository {
             return true;
         } catch (HibernateException ex) {
             ex.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     @Override
     public Product getProductById(int id) {
         Session session = this.sessionFactory.getObject().getCurrentSession();
         return session.get(Product.class, id);
+    }
+
+    @Override
+    public boolean updateProduct(Product product) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        try {
+            session.update(product);
+            return true;
+        } catch (HibernateException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return false;
     }
 }

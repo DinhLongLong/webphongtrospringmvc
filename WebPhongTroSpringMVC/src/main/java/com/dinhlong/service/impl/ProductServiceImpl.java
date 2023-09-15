@@ -7,13 +7,17 @@ package com.dinhlong.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.dinhlong.DTO.ProductRequest;
 import com.dinhlong.pojos.Product;
 import com.dinhlong.repository.ProductRepository;
 import com.dinhlong.service.ProductService;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 /**
@@ -43,8 +47,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getCatProducts(int categoryId) {
-        return this.productRepository.getCatProducts(categoryId);
+    public List<Product> getProductsByCategoryId(int categoryId) {
+        return this.productRepository.getProductsByCategoryId(categoryId);
     }
 
     @Override
@@ -55,5 +59,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean deleteProduct(int id) {
         return this.productRepository.deleteProduct(id);
+    }
+
+    @Override
+    public boolean updateProduct(Product product) {
+        return productRepository.updateProduct(product);
+    }
+
+    @Override
+    public List<Product> getProductsByUserId(int userId, ProductRequest request) {
+        List<Product> products = this.productRepository.getProductsByUserId(userId);
+        PagedListHolder page = new PagedListHolder(products);
+        page.setPageSize(request.getPageSize());
+        page.setPage(request.getPageIndex());
+        products = page.getPageCount() < request.getPageSize() ? page.getPageList() : new ArrayList<>();
+        return products;
     }
 }

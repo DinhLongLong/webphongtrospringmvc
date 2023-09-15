@@ -88,19 +88,15 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
         // Disable crsf cho đường dẫn /rest/**
         http.csrf().ignoringAntMatchers("/api/**");
         http.authorizeRequests().antMatchers("/api/login").permitAll();
-        http.authorizeRequests().antMatchers("/api/Posts").permitAll();
         http.authorizeRequests().antMatchers("/api/products").permitAll();
         http.authorizeRequests().antMatchers("/api/categories").permitAll();
         http.authorizeRequests().antMatchers("/api/users").permitAll();
-        http.authorizeRequests().antMatchers("/api/banners").permitAll();
-        http.authorizeRequests().antMatchers("/api/newss").permitAll();
-        http.authorizeRequests().antMatchers("/api/infos").permitAll();
         http.authorizeRequests().antMatchers("/api/current-user").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/**/comments").permitAll();
         http.antMatcher("/api/**").httpBasic().authenticationEntryPoint(restServicesEntryPoint()).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-                .antMatchers(HttpMethod.POST, "/api/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+                .antMatchers(HttpMethod.GET, "/api/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_HOST')or hasRole('ROLE_TENANT')")
+                .antMatchers(HttpMethod.POST, "/api/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_HOST')or hasRole('ROLE_TENANT')")
                 .antMatchers(HttpMethod.DELETE, "/api/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')").and()
                 .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());

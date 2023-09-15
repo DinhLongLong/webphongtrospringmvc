@@ -5,6 +5,7 @@
  */
 package com.dinhlong.controllers;
 
+import com.dinhlong.DTO.ProductRequest;
 import com.dinhlong.pojos.Category;
 import com.dinhlong.pojos.Location;
 import com.dinhlong.pojos.Product;
@@ -16,6 +17,7 @@ import com.dinhlong.service.UserService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,20 +56,40 @@ public class APIProductController {
     @GetMapping(path = "/api/products", produces = {
         MediaType.APPLICATION_JSON_VALUE
     })
-    public ResponseEntity<List<Product>> List(Model model) {
+    public ResponseEntity<List<Product>> products(Model model) {
         List<Product> products = this.productService.getProducts();
         
         return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
     }
     
     @CrossOrigin
-    @GetMapping(path = "/api/products/{categoryId}", produces = {
+    @GetMapping(path = "/api/category/{categoryId}/products", produces = {
         MediaType.APPLICATION_JSON_VALUE
     })
-    public ResponseEntity<List<Product>> ListProductByCate(@PathVariable String categoryId) {
-        List<Product> products = this.productService.getCatProducts(Integer.parseInt(categoryId));
+    public ResponseEntity<List<Product>> productsByCategoryId(@PathVariable String categoryId) {
+        List<Product> products = this.productService.getProductsByCategoryId(Integer.parseInt(categoryId));
         
         return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+    
+    @CrossOrigin
+    @GetMapping(path = "/api/user/{userId}/products", produces = {
+        MediaType.APPLICATION_JSON_VALUE
+    })
+    public ResponseEntity<List<Product>> productsByUserId(@PathVariable String userId, @RequestBody ProductRequest request) {
+        List<Product> products = this.productService.getProductsByUserId(Integer.parseInt(userId), request);
+        
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+    
+    @CrossOrigin
+    @GetMapping(path = "/api/product-detail/{productId}", produces = {
+        MediaType.APPLICATION_JSON_VALUE
+    })
+    public ResponseEntity<List<Product>> productDetail(@PathVariable String productId) {
+        List<Product> product = this.productService.getProducts(Integer.parseInt(productId));
+        
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
     
     @CrossOrigin
@@ -92,14 +114,14 @@ public class APIProductController {
         prod.setPrice(new BigDecimal(price));
         prod.setName(name);
         
-        User u = this.userService.getUserById(Integer.parseInt(userId));
-        prod.setUser(u);
+        User user = this.userService.getUserById(Integer.parseInt(userId));
+        prod.setUser(user);
         
-        Category cate = this.categoryService.getCateById(Integer.parseInt(categoryId));
-        prod.setCategory(cate);
+        Category category = this.categoryService.getCategoryById(Integer.parseInt(categoryId));
+        prod.setCategory(category);
         
-        Location loc = this.locationService.getLocationById(Integer.parseInt(locationId));
-        prod.setLocation(loc);
+        Location location = this.locationService.getLocationById(Integer.parseInt(locationId));
+        prod.setLocation(location);
         
         Boolean isSuccess = this.productService.addProduct(prod);
         
@@ -110,19 +132,46 @@ public class APIProductController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     
-//    @CrossOrigin
-//    @PostMapping("/api/delete-product/{productId}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void deleteProduct(@PathVariable int productId) {
-//        this.productService.deleteProduct(productId);
-//    }
-    
-    
-//    @CrossOrigin
-//    @GetMapping(path = "/api/cat-products", produces = {
-//        MediaType.APPLICATION_JSON_VALUE
-//    })
-//    public ResponseEntity<List<Product>> List(Model model) {
-//        
-//    }
+    @CrossOrigin
+    @PostMapping("/api/delete-product/{productId}")
+    public ResponseEntity<Object> deleteProduct(@PathVariable int productId) {
+        return new ResponseEntity<>(productService.deleteProduct(productId), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping(path = "/api/update-product", produces = {
+            MediaType.APPLICATION_JSON_VALUE
+    })
+    public ResponseEntity<Product> updateProduct(@RequestBody Map<String, String> params) {
+        int id = Integer.valueOf(params.get("id"));
+        String name = params.get("name");
+        String price = params.get("price");
+        String description = params.get("description");
+        String userId = params.get("userId");
+        String acreage = params.get("acreage");
+        String locationId = params.get("locationId");
+        String categoryId = params.get("categoryId");
+        String img = params.get("img");
+
+        Product prod = new Product();
+
+        prod.setId(id);
+        prod.setAcreage(Double.parseDouble(acreage));
+        prod.setImg(img);
+        prod.setDescription(description);
+        prod.setPrice(new BigDecimal(price));
+        prod.setName(name);
+
+        prod.setUser(Objects.nonNull(userId) ? this.userService.getUserById(Integer.parseInt(userId)) : null);
+        prod.setCategory(Objects.nonNull(categoryId) ? this.categoryService.getCategoryById(Integer.parseInt(categoryId)) : null);
+        prod.setLocation(Objects.nonNull(locationId) ? this.locationService.getLocationById(Integer.parseInt(locationId)) : null);
+
+        Boolean isSuccess = this.productService.updateProduct(prod);
+
+        if (isSuccess) {
+            return new ResponseEntity<>(prod, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }

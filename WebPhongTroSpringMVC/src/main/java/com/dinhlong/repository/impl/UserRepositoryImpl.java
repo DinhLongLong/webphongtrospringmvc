@@ -85,4 +85,25 @@ public class UserRepositoryImpl implements UserRepository{
         
         return session.get(User.class, id);
     }
+
+    @Override
+    public List<User> getUsers() {
+        Session s = sessionFactory.getObject().getCurrentSession();
+        Query q = s.createQuery("From User");
+        
+        return q.getResultList();
+    }
+
+    @Override
+    public boolean deleteUser(int UserId) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        User user = this.getUserById(UserId);
+        try {
+            session.delete(user);
+            return true;
+        } catch (HibernateException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
 }

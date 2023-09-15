@@ -6,6 +6,7 @@
 package com.dinhlong.pojos;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +34,10 @@ public class User implements Serializable {
     private Set<Product> products;
     
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Comment> comments;
+    private List<Comment> comments;
+    
+//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+//    private Set<Follow> follows;
     
     @NotNull(message = "{user.nullErr}")
     private String username;

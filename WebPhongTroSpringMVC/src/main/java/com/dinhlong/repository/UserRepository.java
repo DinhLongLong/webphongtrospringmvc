@@ -14,7 +14,9 @@ import java.util.List;
  */
 public interface UserRepository {
     boolean addUser(User user);
+    boolean deleteUser(int UserId);
     User getUserByUsername(String username);
+    List<User> getUsers();
     List<User> getUsers(String username);
     boolean authUser(String username, String password);
     User getUserById(int id);
